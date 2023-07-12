@@ -1,0 +1,23 @@
+﻿Loop,	LoadI  StringStart / Load from the address stored in StringStart
+		SkipCond 800 / Will skip the next line if it's greater than zero 
+		Halt / Will halt if it's less than or equal to zero(the end of string)
+		Load StringStart / Load the "String" address
+        Add One
+		Store StringStart / These three lines increment the address by one, which moves to the next character's address
+        Jump Loop /Jump to the begining of the loop
+      
+StringStart, Adr String /Store the address of the "String"
+
+String, HEX 5A /"Z" This is the start of the String. 
+		HEX 65 /"e"
+		HEX 63 /"c"
+		HEX 61 /"a"
+		HEX 6E /"n"
+		HEX 4C /"L"
+		HEX 69 /"i"
+		HEX 75 /"u"
+		HEX 7E /"~"
+		HEX 21 /"!"
+		HEX 0 / end of string
+        
+One,	DEC 1 / Used to increment the address

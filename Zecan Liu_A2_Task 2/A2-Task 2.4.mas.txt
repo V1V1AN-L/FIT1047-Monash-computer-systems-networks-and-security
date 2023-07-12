@@ -1,0 +1,19 @@
+﻿Load Address / Load the memory address 1E
+Store OutputArg / Store in the subroutine argument
+JnS Read / Store PC at Read, and jump to Loop
+Halt / Will halt after exit from the subroutine
+
+OutputArg,	HEX 0 / Space for argument
+Read,	HEX 0 / Space for return address
+Loop,	Input /Take the user input
+		Skipcond 400 /If user inputs zero, then it will skip the next line  
+		Jump Flag / Jump to Flag
+        JumpI Read / Exit the subroutine if inputs 0
+Flag,	StoreI OutputArg / Store the user input number into memory address 1E
+		Load OutputArg
+        Add One
+		Store OutputArg /These three lines increment the memory address by one, which moves to the next memory address
+        Jump Loop / Jump back to the start of the loop
+                
+One,	HEX 1 / Use to increment the address
+Address,HEX 1E 

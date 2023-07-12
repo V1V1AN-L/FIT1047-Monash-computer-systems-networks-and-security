@@ -1,0 +1,86 @@
+﻿JnS subLowerCase
+Halt
+
+subLowerCase,	HEX 0
+JnS subSROT13
+
+start, LoadI addressStart / Access the data stored in memory
+Skipcond 800 / Check to see if there is a data stored in memory
+Halt / Halt when nothing in the memory address
+Output / Output the result 
+Load addressStart 
+Add One 
+Store addressStart / These three lines increment the address
+Jump start/ Jump to the start to access the next data in memory address 
+
+
+subSROT13,	HEX 0 / Space for return address
+Loop,	Input / Take the user input
+		Store Temp / Store the data into Temp
+		Skipcond 400 / Check to see if the user input 0
+		Jump LowerCase / Jump to start the convert
+        JumpI subSROT13 / Exit the subroutine
+
+LowerCase,	Subt a /  Use the character subtract HEX 60 (one character before "a")
+			Skipcond 800 / Check to see if the character is behind "`" (will be postive number if behind)
+        	Jump UpperCase / Check if it's a capital letter
+			Load Temp / Load the character again
+			Subt z / Subtract HEX 7B (one character after "z")
+        	Skipcond 000 / If it's negative, then it means it's a character before "{" & after "`", which is a lower case letter from a to z
+        	Jump Output /Jump to output
+        	Jump ROT13 / Jump to start convert
+    
+UpperCase,	Load Temp / Load the character again
+			Subt  A / Use the character subtract HEX 40 (one character before capital A)
+			Skipcond 800 / Check to see if the character is behind "@" (will be postive number if behind)
+        	Jump Output / If it's not postive number, then we know it's neither a capital letter, nor a lower case letter, therefore no need to convert, go to the Output label to output
+			Load Temp / Load the character again
+			Subt Z / Subtract HEX 5B (one character after capital Z)
+        	Skipcond 000 / If it's negative, then it means it's a character before "[" & after "@", which is a capital letter from A to Z 
+        	Jump Output / If not negative number, then it's neither a capital letter, nor a lower case letter, therefore no need to convert, go to the Output label to output
+        	Load Temp / Start to do the convert from capital letter to lower case letter
+        	Add Convert20 / Add HEX 20 will convert the capital letter to corresponding lower case letter. 
+			Store Temp / Store the result back to the temp
+            Jump ROT13 / Then start to do the ROT13 convert 
+			             
+ROT13,	Load Temp / Load the character again
+        Add Convert13 / Add "13"
+		Store Temp / Store the converted result into Temp again 
+        Load Temp / Load the character again
+		Subt z / Subtract the character behind "z", to see if it's out of range
+        Store X / Store the result in X
+        Skipcond 000 / if the result is negative, which means it's still within a-z, then output
+        Jump NextCycle / if it's not negative, it means it's out of a-z range, which needs to be converted again 
+        Jump Output / Go to output the result
+        
+Output,	Load Temp / Load the character again
+		StoreI address / Store at the memory address
+		Jump addressIncrement /Jump to increment the address
+        
+NextCycle,	Load X / Load the out of range result (the distance from "a")
+			Add a 
+            Add One / add "a" (one character before a + 1)  
+			StoreI address / Store at memory address
+			Jump addressIncrement / Jump to increment the address
+
+addressIncrement, 	Load address 
+					Add One
+            		Store address / These three lines increment the memory address by one
+            		Jump Loop / Jump back to the start of the loop
+
+X,		HEX 0 / Space for store the distance from "a"
+One,	HEX 1
+Temp,	HEX 0 /Store the user input character
+
+A,		HEX 40 / Stands for "@", the character before "A"
+Z,		HEX 5B / Stands for "[", the character after "Z"
+Convert20,HEX 20 / use to convert the capital letter to corresponding lower case letter
+
+a,		HEX 60 / "`"
+z,		HEX 7B / "{"
+Convert13,HEX D / +13
+            
+address, HEX 4E / memory address used to store data
+addressStart, HEX 4E / memory address used to access data
+            
+            

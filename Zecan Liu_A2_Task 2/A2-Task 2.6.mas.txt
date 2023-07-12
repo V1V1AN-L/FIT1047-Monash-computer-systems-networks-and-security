@@ -1,0 +1,62 @@
+﻿JnS subROT13 / Store PC at subROT13, and jump to Loop
+
+start, LoadI addressStart / Load the memory data (after converted string)
+Skipcond 800 / Check if the memory contains any character
+Halt / If the memory contains nothing, then halt
+Output / Output the converted string
+Load addressStart 
+Add One
+Store addressStart / These three line increment the memory address
+Jump start / Jump to the start
+
+subROT13,	HEX 0 / Space for return address
+
+Loop,	Input / Take user input
+		Store Temp / Store the character into Temp 
+		Skipcond 400 / Check if the character is zero
+		Jump Flag / If not zero, go to Flag
+        JumpI subROT13 / If it's zero, then exit the subroutine
+        
+Flag,	Subt a / Use the character subtract HEX 60 (one character before "a")
+		Skipcond 800 / Check to see if the character is behind "`" (will be postive number if behind)
+        Jump Output / If it's not postive number, then we know it's not a lower case letter, therefore no need to convert, go to the Output label to output
+		Load Temp / Load the character again 
+		Subt z / Subtract HEX 7B (one character after "z")
+        Skipcond 000 / If it's negative, then it means it's a character before "{" & after "`", which is a lower case letter from a to z
+        Jump Output / If not negative number, then it means it's a character after "z", therefore no need to convert, go to the Output label to output
+        Load Temp / Start to do the convert
+        Add Convert / add "13"
+		Store Temp / Store the converted result into Temp again
+        / if the result is beyond "z", then it should re-start from a-z
+        Load Temp / Load the converted result again
+		Subt z / Subtract the character behind "z", to see if it's out of range
+        Store X / Store the result in X
+        Skipcond 000 / if the result is negative, which means it's still within a-z, then output
+        Jump NextCycle / if it's not negative, it means it's out of a-z range, which needs to be converted again
+        Jump Output 
+        
+Output,	Load Temp / Load the result
+		StoreI address / Store the data into memory 
+        Load address 
+		Add One 
+		Store address / These three lines increment the memory address
+        Jump Loop / Jump back to the start of the loop
+        
+NextCycle,	Load X / Load the out of range result (the distance from "a")
+			Add a 
+            Add One / add "a" (one character before a + 1) 
+            Store Temp /Store the final result 
+			Jump Output / Output the final converted number
+            Jump Loop / Jump back to the start of the loop
+            
+            
+X,		HEX 0 / Space for out of range characters
+One,	HEX 1
+Temp,	HEX 0 
+
+a,		HEX 60 / "`"
+z,		HEX 7B / "{"
+Convert,HEX D / Dec 13
+
+address, HEX 3E / Used to store data
+addressStart, HEX 3E / Used to access data

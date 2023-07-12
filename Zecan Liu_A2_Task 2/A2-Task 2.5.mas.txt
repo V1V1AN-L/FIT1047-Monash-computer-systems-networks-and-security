@@ -1,0 +1,52 @@
+﻿Load Address / Load the PrintFrom address
+Store subLowerCaseArg / Store into the subLowerCaseArg
+JnS subLowerCase / Store PC at subLowerCase, and jump to Loop
+Halt
+
+subLowerCaseArg,HEX 0 / Space for argument
+subLowerCase,	HEX 0 / Space for return address
+
+Loop,	LoadI subLowerCaseArg / Load from the address stored in the argument, which actually load the first character
+		Store Temp / Store the character into Temp
+		Skipcond 400 / Check if the character is zero
+		Jump Flag / If not zero, go to Flag
+        JumpI subLowerCase/ If the character is zero, then exit the subroutine
+
+Flag,	Subt  A / Use the character subtract HEX 40 (one character before capital A)
+		Skipcond 800 / Check to see if the character is behind "@" (will be postive number if behind)
+        Jump Output / If it's not postive number, then we know it's not a capital letter, therefore no need to convert, go to the Output label to output
+		Load Temp / Load the character again 
+		Subt Z / Subtract HEX 5B (one character after capital Z)
+        Skipcond 000 / If it's negative, then it means it's a character before "[" & after "@", which is a capital letter from A to Z 
+        Jump Output/ If not negative number, then it means it's a character after capital Z, therefore no need to convert, go to the Output label to output
+        Load Temp / Start to do the convert
+        Add Convert / Add HEX 20 will convert the capital letter to corresponding lower case letter. 
+		Output / Output the lower case letter
+        
+AdrIncrement,	Load subLowerCaseArg 
+				Add One
+				Store subLowerCaseArg / These three lines increment the address by one, which moves to the next character's address
+        		Jump Loop / Jump to the start of the loop
+        
+Output,	Load Temp / Load the character
+		Output / Output the character 
+        Jump AdrIncrement / Jump to increment the address
+
+One,	HEX 1
+Temp,	HEX 0 / space for a particular character
+
+A,		HEX 40 / Stands for "@", the character before "A"
+Z,		HEX 5B / Stands for "[", the character after "Z"
+Convert,HEX 20 / use to convert the capital letter to corresponding lower case letter
+
+Address, Adr PrintFrom / Store the address of the string
+PrintFrom,	HEX 35 / These hex numbers are "5 A B U N c 5 j" 
+			HEX 41
+			HEX 42
+            HEX 55
+            HEX 4E
+            HEX	63
+            HEX 35
+            HEX	6A
+            HEX 0 /End of string
+            

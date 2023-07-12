@@ -1,0 +1,30 @@
+﻿Load PrintString / Load the string address
+Store subPrintArg / Store in subroutine argument
+JnS subPrint / Store PC at subPrint, and jump to Loop
+Halt / Will halt after exit from the subroutine
+
+subPrintArg,HEX 0 / Space for argument
+subPrint,	HEX 0 / Space for return address
+Loop,	LoadI subPrintArg / Load from the address stored in the argument
+		Skipcond 800 / Check if the character is greater than 0, if so, skip the next line of code
+        JumpI subPrint / If it's equal to or less than 0, then exit the subroutine(end of string) 
+        Output / Output the character 
+		Load subPrintArg / Load the PrintFrom address 
+        Add One
+		Store subPrintArg/ These three lines increment the address by one, which moves to the next character's address 
+        Jump Loop/ Then jump back to the start of the loop
+      
+PrintString, Adr PrintFrom /Store the address of the "PrintFrom"
+PrintFrom, HEX 5A /This is the start of the String. 
+		HEX 65
+		HEX 63
+		HEX 61
+		HEX 6E
+		HEX 4C
+		HEX 69
+		HEX 75
+		HEX 7E
+		HEX 21
+		HEX 0	/ end of string
+        
+One,	DEC 1 / Used to increment the address
